@@ -1,3 +1,3 @@
-class Welcome extends Phaser.Scene {
-  
+export default class Welcome extends Phaser.Scene {
+
 }

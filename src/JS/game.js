@@ -1,4 +1,8 @@
 import Phaser from 'phaser';
+import Welcome from './welcome';
+import Controls from './controls';
+import Play from './play';
+import GameOver from './finish';
 
 let config = {
   type: Phaser.WEBGL,
@@ -12,9 +16,10 @@ let config = {
     }
   },
   scene: [
-    SceneMainMenu,
-    SceneMain,
-    SceneGameOver
+    Welcome,
+    Controls,
+    Play,
+    GameOver
   ],
   pixelArt: true,
   roundPixels: true

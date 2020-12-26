@@ -1,3 +1,3 @@
-class Play extends Phaser.Scene {
-  
+export default class Play extends Phaser.Scene {
+
 }
