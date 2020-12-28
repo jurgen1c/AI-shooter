@@ -1,13 +1,15 @@
 import Phaser from 'phaser';
-import Welcome from './welcome';
-import Controls from './controls';
-import Play from './play';
-import GameOver from './finish';
+import SceneWelcome from './welcome';
+import SceneControls from './controls';
+import ScenePlay from './play';
+import SceneGameOver from './finish';
+
+let scaleRatio = window.devicePixelRatio / 3
 
 let config = {
   type: Phaser.WEBGL,
-  width: 480,
-  height: 520,
+  width: window.innerWidth / 1.1, 
+  height: window.innerHeight / 1.1,
   backgroundColor: "black",
   physics: {
     default: "arcade",
@@ -16,10 +18,10 @@ let config = {
     }
   },
   scene: [
-    Welcome,
-    Controls,
-    Play,
-    GameOver
+    SceneWelcome,
+    SceneControls,
+    ScenePlay,
+    SceneGameOver
   ],
   pixelArt: true,
   roundPixels: true

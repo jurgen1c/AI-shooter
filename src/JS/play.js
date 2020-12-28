@@ -1,3 +1,16 @@
-export default class Play extends Phaser.Scene {
+export default class ScenePlay extends Phaser.Scene {
+  constructor(){
+    super({ key: "ScenePlay" });
+  }
+  preload(){
 
+  }
+
+  create(){
+
+  }
+
+  update(){
+
+  }
 }

@@ -1,3 +1,16 @@
-export default class Welcome extends Phaser.Scene {
+export default class SceneWelcome extends Phaser.Scene {
+  constructor(){
+    super({ key: "SceneWelcome" });
+  }
+  preload(){
 
+  }
+
+  create(){
+    this.scene.start("SceneControls");
+  }
+
+  update(){
+
+  }
 }
