@@ -1,12 +1,18 @@
 import Entity from './entity';
-//import ml5 from 'ml5';
+import ml5 from 'ml5';
 export default class Player extends Phaser.GameObjects.Video {
   constructor(scene, x, y, key){
     super(scene, x, y, key);
     this.scene = scene;
     this.width = 100;
     this.height = 100;
+    this.bodyPix = '';
     this.flipX = true;
+    this.removeVideoElementOnDestroy = true;
+    this.pixOptions = {
+        outputStride: 8, // 8, 16, or 32, default is 16
+        segmentationThreshold: 0.3 // 0 - 1, defaults to 0.5 
+    }
     this.setData("type", 'Player');
     this.setData("isDead", false);
     this.setData("speed", 200);
@@ -15,7 +21,6 @@ export default class Player extends Phaser.GameObjects.Video {
     this.setData("timerShootDelay", 10);
     this.setData("timerShootTick", this.getData("timerShootDelay") - 1);
     this.getMedia().then( result => {
-
       result.scene.add.existing(this);
       result.scene.physics.add.existing(this);
     })
@@ -71,6 +76,16 @@ export default class Player extends Phaser.GameObjects.Video {
   }
 
   update() {
+    if(this.bodyPix){
+      this.bodyPix.segment(this.video, (error, result) => {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        // log the result
+        console.log(result.backgroundMask);
+      }, this.pixOptions)
+    }
     if(this.body){
       this.body.setVelocity(0, 0);
     }
@@ -109,6 +124,7 @@ export default class Player extends Phaser.GameObjects.Video {
         audio: false,
       };
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      this.bodyPix = await new ml5.bodyPix( () => { console.log('Model eady')}, this.pixOptions);
       let video = document.createElement("video");
       video.playsinline = true;
       video.srcObject = mediaStream;
@@ -146,34 +162,19 @@ export default class Player extends Phaser.GameObjects.Video {
     }
   }
 
-  async loadMediaStream(videoElement) {
-
-    this.video = videoElement;
-    await this.video.play();
-    if (this.videoTexture)
-    {
-      this.scene.sys.textures.remove(this._key);
-
-      // @ts-ignore
-      this.videoTexture = this.scene.sys.textures.create(this._key, videoElement, videoElement.videoWidth, videoElement.videoHeight);
-      this.videoTextureSource = this.videoTexture.source[0];
-      this.videoTexture.add('__BASE', 0, 0, 0, videoElement.videoWidth, videoElement.videoHeight);
-
-      // @ts-ignore
-      this.setTexture(this.videoTexture);
-      // @ts-ignore
-      this.setSizeToFrame();
-      this.updateDisplayOrigin();
-
-      // @ts-ignore
-      this.emit(Phaser.Events.VIDEO_CREATED, this, videoElement.videoWidth, videoElement.videoHeight);
+  modelReady() {
+    // segment the image given
+    this.bodyPix.segment(this.video, this.gotResults);
+  }
+  
+  gotResults(error, result) {
+    if (error) {
+      console.log(error);
+      return;
     }
-    else
-    {
-      this.updateTexture();
-    }
-    return this;
-  };
+    // log the result
+    console.log(result.backgroundMask);
+  }
 }
 
 class PlayerLaser extends Entity {
