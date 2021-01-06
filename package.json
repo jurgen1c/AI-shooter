@@ -29,6 +29,7 @@
     "jest": "^26.6.3",
     "node-sass": "^5.0.0",
     "sass-loader": "^10.1.0",
+    "style-loader": "^2.0.0",
     "stylelint": "^13.3.3",
     "stylelint-config-standard": "^20.0.0",
     "stylelint-csstree-validator": "^1.9.0",
@@ -39,7 +40,7 @@
   },
   "dependencies": {
     "css-loader": "^5.0.1",
-    "ml5": "^0.6.0",
+    "ml5": "^1.0.0",
     "phaser": "^3.50.1"
   }
 }

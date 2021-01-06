@@ -7,7 +7,7 @@ export default class SceneWelcome extends Phaser.Scene {
   }
 
   create(){
-    this.scene.start("SceneControls");
+    this.scene.start("ScenePlay");
   }
 
   update(){

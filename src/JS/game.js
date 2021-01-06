@@ -1,3 +1,4 @@
+import '../Assets/SCSS/main.scss';
 import Phaser from 'phaser';
 import SceneWelcome from './welcome';
 import SceneControls from './controls';
@@ -8,8 +9,8 @@ let scaleRatio = window.devicePixelRatio / 3
 
 let config = {
   type: Phaser.WEBGL,
-  width: window.innerWidth / 1.1, 
-  height: window.innerHeight / 1.1,
+  width: window.innerWidth * 0.5, 
+  height: window.innerHeight,
   backgroundColor: "black",
   physics: {
     default: "arcade",
