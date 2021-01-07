@@ -1,18 +1,13 @@
 import Entity from './entity';
-import ml5 from 'ml5';
 export default class Player extends Phaser.GameObjects.Video {
   constructor(scene, x, y, key){
     super(scene, x, y, key);
     this.scene = scene;
-    this.width = 100;
-    this.height = 100;
-    this.bodyPix = '';
+    this.width = 50;
+    this.height = 50;
+    this.bodyPix = null;
     this.flipX = true;
     this.removeVideoElementOnDestroy = true;
-    this.pixOptions = {
-        outputStride: 8, // 8, 16, or 32, default is 16
-        segmentationThreshold: 0.3 // 0 - 1, defaults to 0.5 
-    }
     this.setData("type", 'Player');
     this.setData("isDead", false);
     this.setData("speed", 200);
@@ -76,16 +71,6 @@ export default class Player extends Phaser.GameObjects.Video {
   }
 
   update() {
-    if(this.bodyPix){
-      this.bodyPix.segment(this.video, (error, result) => {
-        if (error) {
-          console.log(error);
-          return;
-        }
-        // log the result
-        console.log(result.backgroundMask);
-      }, this.pixOptions)
-    }
     if(this.body){
       this.body.setVelocity(0, 0);
     }
@@ -120,11 +105,10 @@ export default class Player extends Phaser.GameObjects.Video {
   async getMedia(){
     try {
       const constraints = {
-        video: {width: window.innerWidth * 0.1, height: window.innerHeight * 0.1},
+        video: {width: 50, height: 50},
         audio: false,
       };
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-      this.bodyPix = await new ml5.bodyPix( () => { console.log('Model eady')}, this.pixOptions);
       let video = document.createElement("video");
       video.playsinline = true;
       video.srcObject = mediaStream;
@@ -137,18 +121,14 @@ export default class Player extends Phaser.GameObjects.Video {
       {
         this.scene.sys.textures.remove(this._key);
 
-        // @ts-ignore
         this.videoTexture = this.scene.sys.textures.create(this._key, this.video, this.video.videoWidth, this.video.videoHeight);
         this.videoTextureSource = this.videoTexture.source[0];
         this.videoTexture.add('__BASE', 0, 0, 0, this.video.videoWidth, this.video.videoHeight);
 
-        // @ts-ignore
         this.setTexture(this.videoTexture);
-        // @ts-ignore
         this.setSizeToFrame();
         this.updateDisplayOrigin();
 
-        // @ts-ignore
         this.emit(Phaser.Events.VIDEO_CREATED, this, this.video.videoWidth, this.video.videoHeight);
       }
       else
@@ -156,24 +136,10 @@ export default class Player extends Phaser.GameObjects.Video {
         this.updateTexture();
       }
       return this;
-      //this.add.existing(phaserVideo);
+
     } catch (e) {
       console.log("error", e.message, e.name);
     }
-  }
-
-  modelReady() {
-    // segment the image given
-    this.bodyPix.segment(this.video, this.gotResults);
-  }
-  
-  gotResults(error, result) {
-    if (error) {
-      console.log(error);
-      return;
-    }
-    // log the result
-    console.log(result.backgroundMask);
   }
 }
 

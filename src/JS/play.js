@@ -1,6 +1,6 @@
 import Player from './entities/player';
+import ml5 from 'ml5/dist/ml5';
 import ScrollingBackground from './entities/scrolling';
-//import ml5 from 'ml5';
 import sprBg0 from '../Assets/images/sprBg0.png';
 import sprBg1 from '../Assets/images/sprBg1.png';
 import sprExplosion from '../Assets/images/sprExplosion.png';
@@ -12,13 +12,18 @@ import sprLaserPlayer from '../Assets/images/sprLaserPlayer.png';
 import sndExplode0 from '../Assets/images/sndExplode0.wav';
 import sndExplode1 from '../Assets/images/sndExplode1.wav';
 import sndLaser from '../Assets/images/sndLaser.wav';
+import mask from '../Assets/images/mask.png';
 export default class ScenePlay extends Phaser.Scene {
   constructor(){
     super({ key: "ScenePlay" });
   }
   preload(){
-    this.load.image("sprBg0", sprBg0);
+    this.load.image("sprBg0", sprBg0, {
+      width: this.game.config.width,
+      height: this.game.config.height,
+    });
     this.load.image("sprBg1", sprBg1);
+    this.load.image("mask", mask);
     this.load.spritesheet("sprExplosion", sprExplosion, {
       frameWidth: 32,
       frameHeight: 32
@@ -40,6 +45,9 @@ export default class ScenePlay extends Phaser.Scene {
   }
 
   create(){
+    this.pose = null;
+    this.skeleton = null;
+    this.poseLabel = null;
     this.anims.create({
       key: "sprEnemy0",
       frames: this.anims.generateFrameNumbers("sprEnemy0"),
@@ -85,7 +93,23 @@ export default class ScenePlay extends Phaser.Scene {
       400,
       "Player",
     );
-    
+    this.poseNet = ml5.poseNet(this.player.video, ()=>{console.log('model ready:)')});
+    this.poseNet.on('pose', this.gotPoses);
+
+    let options = {
+      input: 34,
+      output: 6,
+      task: 'classification',
+      debug: true
+    }
+    this.brain = ml5.neuralNetwork(options);
+    const modelInfo = {
+      model: 'model/model.json',
+      metadata: 'model/model_meta.json',
+      weights: 'model/model.weights.bin',
+    }
+    this.brain.load(modelInfo, this.brainLoaded);
+
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -131,14 +155,14 @@ export default class ScenePlay extends Phaser.Scene {
       else if (this.keyS.isDown) {
         this.player.moveDown();
       } */
-      if (this.keyA.isDown) {
+      if (this.keyA.isDown || this.poseLabel === 'left') {
         this.player.moveLeft();
       }
-      else if (this.keyD.isDown) {
+      else if (this.keyD.isDown || this.poseLabel === 'right') {
         this.player.moveRight();
       }
     
-      if (this.keySpace.isDown) {
+      if (this.keySpace.isDown || this.poseLabel === 'fire') {
         this.player.setData("isShooting", true);
       }
       else {
@@ -147,23 +171,35 @@ export default class ScenePlay extends Phaser.Scene {
       }
     }
   }
-  async getMedia(){
-    try {
-      const constraints = {
-        video: {width: 100, height: 100},
-        audio: false,
-      };
-      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-      let video = document.createElement("video");
-      video.playsinline = true;
-      video.srcObject = mediaStream;
-      video.width = 100;
-      video.height = 100;
-      video.autoplay = true;
-      return video
-      //this.add.existing(phaserVideo);
-    } catch (e) {
-      console.log("error", e.message, e.name);
+  brainLoaded(){
+    this.classifyPose();
+  }
+  gotPoses(poses){
+    if(poses.length > 0){
+      this.pose = poses[0].pose;
+      this.skeleton = poses[0].skeleton;
     }
+  }
+  classifyPose(){
+    if(this.pose){
+      let inputs = [];
+  
+      for(let i = 0; i < pose.keypoints.length; i++){
+        let x = this.pose.keypoints[i].position.x;
+        let y = this.pose.keypoints[i].position.y;
+        inputs.push(x);
+        inputs.push(y);
+      }
+      this.brain.classify(inputs, this.gotResult);
+    }else {
+      setTimeout(classifyPose, 100);
+    }
+  }
+  gotResult(){
+    if(results[0].confidence > 0.75){
+      this.poseLabel = results[0].label;
+    }
+    console.log(results[0].confidence);
+    this.classifyPose();
   }
 }
