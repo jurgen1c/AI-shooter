@@ -1,5 +1,6 @@
 import Player from './entities/player';
-import ml5 from 'ml5/dist/ml5';
+import Enemy from './entities/enemy';
+import Chaser from './entities/chaser';
 import ScrollingBackground from './entities/scrolling';
 import sprBg0 from '../Assets/images/sprBg0.png';
 import sprBg1 from '../Assets/images/sprBg1.png';
@@ -12,7 +13,6 @@ import sprLaserPlayer from '../Assets/images/sprLaserPlayer.png';
 import sndExplode0 from '../Assets/images/sndExplode0.wav';
 import sndExplode1 from '../Assets/images/sndExplode1.wav';
 import sndLaser from '../Assets/images/sndLaser.wav';
-import mask from '../Assets/images/mask.png';
 export default class ScenePlay extends Phaser.Scene {
   constructor(){
     super({ key: "ScenePlay" });
@@ -23,7 +23,6 @@ export default class ScenePlay extends Phaser.Scene {
       height: this.game.config.height,
     });
     this.load.image("sprBg1", sprBg1);
-    this.load.image("mask", mask);
     this.load.spritesheet("sprExplosion", sprExplosion, {
       frameWidth: 32,
       frameHeight: 32
@@ -42,12 +41,23 @@ export default class ScenePlay extends Phaser.Scene {
     this.load.audio("sndExplode0", sndExplode0);
     this.load.audio("sndExplode1", sndExplode1);
     this.load.audio("sndLaser", sndLaser);
+    
   }
 
   create(){
-    this.pose = null;
     this.skeleton = null;
     this.poseLabel = null;
+    this.poseNet = null;
+    this.brain = null;
+    this.player = new Player(
+      this,
+      this.game.config.width * 0.5,
+      this.game.config.height * 0.9,
+      "Player",
+    );
+    this.livesText = this.add.text(16, 16, 'Lives: 5', { fontSize: '32px', fill: '#FFF' });
+    this.scoreText = this.add.text(306, 16, 'Score: 0', { fontSize: '32px', fill: '#FFF' });
+
     this.anims.create({
       key: "sprEnemy0",
       frames: this.anims.generateFrameNumbers("sprEnemy0"),
@@ -68,13 +78,7 @@ export default class ScenePlay extends Phaser.Scene {
       frameRate: 20,
       repeat: 0
     });
-
-    this.anims.create({
-      key: "sprPlayer",
-      frames: this.anims.generateFrameNumbers("sprPlayer"),
-      frameRate: 20,
-      repeat: -1
-    });
+    
     this.sfx = {
       explosions: [
         this.sound.add("sndExplode0"),
@@ -87,40 +91,66 @@ export default class ScenePlay extends Phaser.Scene {
       let bg = new ScrollingBackground(this, "sprBg0", i * 10);
       this.backgrounds.push(bg);
     }
-    this.player = new Player(
-      this,
-      200,
-      400,
-      "Player",
-    );
-    this.poseNet = ml5.poseNet(this.player.video, ()=>{console.log('model ready:)')});
-    this.poseNet.on('pose', this.gotPoses);
-
-    let options = {
-      input: 34,
-      output: 6,
-      task: 'classification',
-      debug: true
-    }
-    this.brain = ml5.neuralNetwork(options);
-    const modelInfo = {
-      model: 'model/model.json',
-      metadata: 'model/model_meta.json',
-      weights: 'model/model.weights.bin',
-    }
-    this.brain.load(modelInfo, this.brainLoaded);
 
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.enemies = this.add.group();
     this.enemyLasers = this.add.group();
     this.playerLasers = this.add.group();
 
+    this.time.addEvent({
+      delay: 3000,
+      callback: function() {
+        let enemy = null;
+
+        if (Phaser.Math.Between(0, 10) >= 3) {
+          enemy = new Enemy(
+            this,
+            Phaser.Math.Between(0, this.game.config.width),
+            0
+          );
+        }
+        else if (Phaser.Math.Between(0, 10) >= 5) {
+          if (this.getEnemiesByType("ChaserShip").length < 5) {
+
+            enemy = new Chaser(
+              this,
+              Phaser.Math.Between(0, this.game.config.width),
+              0
+            );
+          }
+        }
+        /* else {
+          enemy = new CarrierShip(
+            this,
+            Phaser.Math.Between(0, this.game.config.width),
+            0
+          );
+        } */
+
+        if (enemy !== null) {
+          enemy.setScale(Phaser.Math.Between(10, 20) * 0.1);
+          this.enemies.add(enemy);
+        }
+      },
+      callbackScope: this,
+      loop: true
+    });
+
     this.physics.add.collider(this.playerLasers, this.enemies, (playerLaser, enemy) => {
       if (enemy) {
         if (enemy.onDestroy !== undefined) {
-          enemy.onDestroy();
+          if(enemy.type == 'GunShip'){
+
+            enemy.onDestroy();
+            this.player.score += 100
+          }else{
+            enemy.onDestroy();
+            this.player.score += 200
+          }
         }
       
         enemy.explode(true);
@@ -139,7 +169,8 @@ export default class ScenePlay extends Phaser.Scene {
       if (!player.getData("isDead") &&
           !laser.getData("isDead")) {
         player.explode(false);
-        player.onDestroy();
+        this.livesText.setText('Lives: ' + this.player.lives);
+        //player.onDestroy();
         laser.destroy();
       }
     });
@@ -149,55 +180,123 @@ export default class ScenePlay extends Phaser.Scene {
   update(){
     if (!this.player.getData("isDead")) {
       this.player.update();
-      /* if (this.keyW.isDown) {
+      if (this.keyW.isDown) {
         this.player.moveUp();
       }
       else if (this.keyS.isDown) {
         this.player.moveDown();
-      } */
-      if (this.keyA.isDown || this.poseLabel === 'left') {
+      }
+      if (this.keyA.isDown) {
         this.player.moveLeft();
       }
-      else if (this.keyD.isDown || this.poseLabel === 'right') {
+      else if (this.keyD.isDown) {
         this.player.moveRight();
       }
     
-      if (this.keySpace.isDown || this.poseLabel === 'fire') {
+      if (this.keySpace.isDown ) {
         this.player.setData("isShooting", true);
-      }
-      else {
+      }else {
         this.player.setData("timerShootTick", this.player.getData("timerShootDelay") - 1);
         this.player.setData("isShooting", false);
       }
     }
-  }
-  brainLoaded(){
-    this.classifyPose();
-  }
-  gotPoses(poses){
-    if(poses.length > 0){
-      this.pose = poses[0].pose;
-      this.skeleton = poses[0].skeleton;
+    
+    for (let i = 0; i < this.backgrounds.length; i++) {
+      this.backgrounds[i].update();
+    }
+    this.scoreText.setText('Score: ' + this.player.score);
+
+    for (let i = 0; i < this.enemies.getChildren().length; i++) {
+      let enemy = this.enemies.getChildren()[i];
+      enemy.update();
+      
+      if (enemy.x < -enemy.displayWidth ||
+        enemy.x > this.game.config.width + enemy.displayWidth ||
+        enemy.y < -enemy.displayHeight * 4 ||
+        enemy.y > this.game.config.height + enemy.displayHeight) {
+    
+          if (enemy) {
+            if (enemy.onDestroy !== undefined) {
+              enemy.onDestroy();
+            }
+      
+            enemy.destroy();
+            this.player.lives -= 1;
+            this.livesText.setText('Lives: ' + this.player.lives);
+          }
+      
+      }
+    }
+    for (let i = 0; i < this.enemyLasers.getChildren().length; i++) {
+      let laser = this.enemyLasers.getChildren()[i];
+      laser.update();
+
+      if (laser.x < -laser.displayWidth ||
+        laser.x > this.game.config.width + laser.displayWidth ||
+        laser.y < -laser.displayHeight * 4 ||
+        laser.y > this.game.config.height + laser.displayHeight) {
+        if (laser) {
+          laser.destroy();
+        }
+      }
+    }
+
+    for (let i = 0; i < this.playerLasers.getChildren().length; i++) {
+      let laser = this.playerLasers.getChildren()[i];
+      laser.update();
+
+      if (laser.x < -laser.displayWidth ||
+        laser.x > this.game.config.width + laser.displayWidth ||
+        laser.y < -laser.displayHeight * 4 ||
+        laser.y > this.game.config.height + laser.displayHeight) {
+        if (laser) {
+          laser.destroy();
+        }
+      }
     }
   }
+
+  getEnemiesByType(type) {
+    let arr = [];
+    for (let i = 0; i < this.enemies.getChildren().length; i++) {
+      let enemy = this.enemies.getChildren()[i];
+      if (enemy.getData("type") == type) {
+        arr.push(enemy);
+      }
+    }
+    return arr;
+  }
+
+  brainLoaded(){
+    this.classifyPose();
+    console.log('brain Loaded');
+  }
+
   classifyPose(){
-    if(this.pose){
+    if(this.pose !== null && this.brain !== null){
       let inputs = [];
   
-      for(let i = 0; i < pose.keypoints.length; i++){
+      for(let i = 0; i < this.pose.keypoints.length; i++){
         let x = this.pose.keypoints[i].position.x;
         let y = this.pose.keypoints[i].position.y;
         inputs.push(x);
         inputs.push(y);
+        console.log(x)
       }
+
+      console.log('marker 1')
+      let word = this.brain.classify(inputs, this.gotresults);
+      console.log(word)
       this.brain.classify(inputs, this.gotResult);
+      console.log('marker 2')
     }else {
-      setTimeout(classifyPose, 100);
+      setTimeout(this.classifyPose, 100);
     }
   }
   gotResult(){
     if(results[0].confidence > 0.75){
       this.poseLabel = results[0].label;
+      console.log('got Results');
     }
     console.log(results[0].confidence);
     this.classifyPose();

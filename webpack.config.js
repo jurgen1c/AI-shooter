@@ -22,6 +22,14 @@ module.exports = {
           loader: 'file-loader',
         },
       },
+      {
+        test: /\.bin$/i,
+        use: 'binary-loader',
+      },
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
+      },
     ],
   },
 };

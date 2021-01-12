@@ -9,6 +9,7 @@ let scaleRatio = window.devicePixelRatio / 3
 
 let config = {
   type: Phaser.WEBGL,
+  autoCenter: true,
   width: window.innerWidth * 0.5, 
   height: window.innerHeight,
   backgroundColor: "black",

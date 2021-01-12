@@ -5,7 +5,7 @@ export default class Enemy extends Entity {
     this.play("sprEnemy0");
     this.body.velocity.y = Phaser.Math.Between(50, 100);
     this.shootTimer = this.scene.time.addEvent({
-      delay: 1000,
+      delay: 2000,
       callback: function() {
         var laser = new EnemyLaser(
           this.scene,

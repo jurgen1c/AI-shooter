@@ -1,10 +1,16 @@
 import Entity from './entity';
+import ml5 from 'ml5';
+import modelJson from '../../Assets/Model/model_controls.json';
+import modelMeta from '../../Assets/Model/model_meta_controls.json';
+import modelWeights from '../../Assets/Model/model.weights.bin';
 export default class Player extends Phaser.GameObjects.Video {
   constructor(scene, x, y, key){
     super(scene, x, y, key);
     this.scene = scene;
     this.width = 50;
     this.height = 50;
+    this.lives = 5;
+    this.score = 0;
     this.bodyPix = null;
     this.flipX = true;
     this.removeVideoElementOnDestroy = true;
@@ -18,11 +24,20 @@ export default class Player extends Phaser.GameObjects.Video {
     this.getMedia().then( result => {
       result.scene.add.existing(this);
       result.scene.physics.add.existing(this);
+      result.scene.poseNet.on('pose', result.gotPoses);
+      /* result.getBrain().then( ()=> {
+        const modelInfo = {
+          model: modelJson,
+          metadata: modelMeta,
+          weights: modelWeights,
+        }
+        this.scene.brain.load(modelInfo, this.scene.brainLoaded());
+      }) */
     })
   }
 
   explode(canDestroy){
-    if (!this.getData("isDead")) {
+    if (this.lives <= 0) {
       // Set the texture to the explosion image, then play the animation
       this.setTexture("sprExplosion");  // this refers to the same animation key we used when we added this.anims.create previously
       this.play("sprExplosion"); // play the animation
@@ -49,8 +64,10 @@ export default class Player extends Phaser.GameObjects.Video {
         }
 
       }, this);
-
+      this.onDestroy();
       this.setData("isDead", true);
+    }else{
+      this.lives -= 1
     }
   }
 
@@ -105,7 +122,7 @@ export default class Player extends Phaser.GameObjects.Video {
   async getMedia(){
     try {
       const constraints = {
-        video: {width: 50, height: 50},
+        video: {width: 200, height: 200},
         audio: false,
       };
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -117,6 +134,7 @@ export default class Player extends Phaser.GameObjects.Video {
       video.autoplay = true;
       this.video = video;
       await this.video.play();
+      this.scene.poseNet = await ml5.poseNet(this.video, ()=>{console.log('model ready:)')});
       if (this.videoTexture)
       {
         this.scene.sys.textures.remove(this._key);
@@ -139,6 +157,38 @@ export default class Player extends Phaser.GameObjects.Video {
 
     } catch (e) {
       console.log("error", e.message, e.name);
+    }
+  }
+  gotPoses(poses){
+    if(poses.length > 0){
+      this.pose = poses[0].pose;
+      if(this.pose.rightEye.x > 200 / 3){
+        this.moveLeft();
+      }else if(this.pose.leftEye.x > (200 / 3) * 2){
+        this.moveRight();
+      }
+      if(this.pose.rightWrist.y > 200 / 3 || this.pose.leftWrist.y > 200 /3){
+        this.setData("isShooting", true);
+      }else {
+        this.setData("timerShootTick", this.getData("timerShootDelay") - 1);
+        this.setData("isShooting", false);
+      }   //console.log(this.pose)
+      //this.skeleton = poses[0].skeleton;
+    }
+  }
+  async getBrain(){
+    try{
+      
+      let options = {
+        input: 34,
+        output: 4,
+        task: 'classification',
+        debug: true
+      }
+      this.scene.brain = await ml5.neuralNetwork(options);
+
+    }catch (e){
+      console.log(e);
     }
   }
 }
