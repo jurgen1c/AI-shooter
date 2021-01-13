@@ -30,6 +30,10 @@
 
 [Live Demo](https://5fff4e3e0fa5dc0007c7a125--condescending-newton-ebcdc0.netlify.app/)
 
+## Video Presentation
+
+[Video](https://www.loom.com/share/4077eb8d63f043109023e541d87d15c4)
+
 <br>
 
 <!-- ABOUT THE PROJECT -->
