@@ -1,4 +1,5 @@
 import 'regenerator-runtime';
+
 class Manager {
   constructor() {
     // key: Za9DjzLaF8mX5266ZIyc

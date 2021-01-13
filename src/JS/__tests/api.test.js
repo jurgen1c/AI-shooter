@@ -1,5 +1,4 @@
 import api from '../score';
-import 'regenerator-runtime';
 
 const axios = require('axios');
 

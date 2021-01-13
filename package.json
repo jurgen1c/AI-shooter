@@ -34,7 +34,6 @@
     "jest-canvas-mock": "^2.3.0",
     "jest-expect-subclass": "^1.0.1",
     "node-sass": "^5.0.0",
-    "regenerator-runtime": "^0.13.7",
     "sass-loader": "^10.1.0",
     "style-loader": "^2.0.0",
     "stylelint": "^13.3.3",
@@ -47,6 +46,7 @@
   },
   "dependencies": {
     "css-loader": "^5.0.1",
-    "phaser": "^3.50.1"
+    "phaser": "^3.50.1",
+    "regenerator-runtime": "^0.13.7"
   }
 }
