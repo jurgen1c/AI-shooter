@@ -12,7 +12,7 @@ module.exports = {
   },
   externals: {
     ml5: 'ml5',
-    p5: 'p5'
+    p5: 'p5',
   },
   module: {
     rules: [
@@ -25,14 +25,6 @@ module.exports = {
         use: {
           loader: 'file-loader',
         },
-      },
-      {
-        test: /\.bin$/i,
-        use: 'binary-loader',
-      },
-      {
-        test: /\.html$/i,
-        loader: 'html-loader',
       },
     ],
   },

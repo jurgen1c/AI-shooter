@@ -7,22 +7,22 @@ export default class ScrollingBackground {
     this.createLayers();
   }
 
-  update(){
+  update() {
     if (this.layers.getChildren()[0].y > 0) {
-      for (var i = 0; i < this.layers.getChildren().length; i++) {
-        var layer = this.layers.getChildren()[i];
+      for (let i = 0; i < this.layers.getChildren().length; i += 1) {
+        const layer = this.layers.getChildren()[i];
         layer.y = (-layer.displayHeight) + (layer.displayHeight * i);
       }
     }
   }
 
-  createLayers(){
-    for (var i = 0; i < 2; i++) {
+  createLayers() {
+    for (let i = 0; i < 2; i += 1) {
       // creating two backgrounds will allow a continuous scroll
-      var layer = this.scene.add.sprite(0, 0, this.key);
+      const layer = this.scene.add.sprite(0, 0, this.key);
       layer.y = (layer.displayHeight * i);
-      var flipX = Phaser.Math.Between(0, 10) >= 5 ? -1 : 1;
-      var flipY = Phaser.Math.Between(0, 10) >= 5 ? -1 : 1;
+      const flipX = Phaser.Math.Between(0, 10) >= 5 ? -1 : 1;
+      const flipY = Phaser.Math.Between(0, 10) >= 5 ? -1 : 1;
       layer.setScale(flipX * 3.5, flipY * 2);
       layer.setDepth(-5 - (i - 1));
       this.scene.physics.world.enableBody(layer, 0);

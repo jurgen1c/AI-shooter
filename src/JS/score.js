@@ -1,12 +1,12 @@
 class Manager {
-  constructor(){
+  constructor() {
     // key: Za9DjzLaF8mX5266ZIyc
     this.key = 'Za9DjzLaF8mX5266ZIyc';
     this.url = `https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/${this.key}/scores/`;
   }
 
 
-  async postScore(data = {}){
+  async postScore(data = {}) {
     const fullData = data;
     try {
       const response = await fetch(this.url, {
@@ -24,16 +24,15 @@ class Manager {
     }
   }
 
-  async getScore(){
-    try{
+  async getScore() {
+    try {
       const scoreData = await fetch(this.url);
       const responseScore = await scoreData.json();
       return responseScore;
-    }catch(e){
-      throw new Error(`Could not complete request: ${e}`)
+    } catch (e) {
+      throw new Error(`Could not complete request: ${e}`);
     }
   }
-
 }
 
 const scoreManager = new Manager();
