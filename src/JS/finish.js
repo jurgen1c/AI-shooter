@@ -2,6 +2,7 @@
 import ScrollingBackground from './entities/scrolling';
 import sprBg0 from '../Assets/images/sprBg0.png';
 import sprBg1 from '../Assets/images/sprBg1.png';
+import scoreManager from './score';
 
 export default class SceneGameOver extends Phaser.Scene {
   constructor(){
@@ -12,6 +13,17 @@ export default class SceneGameOver extends Phaser.Scene {
     this.load.image("sprBg1", sprBg1);
   }
   create(){
+    let scoreCont = document.getElementById('score');
+    scoreManager.getScore().then(result => {
+      scoreCont.style.display = 'block';
+      scoreCont.innerHTML = '';
+      for (let i = 0; i < 5; i++){
+        let div = document.createElement('div');
+        div.className = 'p-score';
+        div.textContent = `Player: ${result.result[i].user} Score: ${result.result[i].score}`;
+        scoreCont.appendChild(div)
+      }
+    });
     this.sfx = {
       btnOver: this.sound.add("sndBtnOver"),
       btnDown: this.sound.add("sndBtnDown")
@@ -19,7 +31,7 @@ export default class SceneGameOver extends Phaser.Scene {
 
     this.btnRestart = this.add.sprite(
       this.game.config.width * 0.5,
-      this.game.config.height * 0.5,
+      this.game.config.height * 0.7,
       "sprBtnRestart"
     );
 
@@ -60,14 +72,15 @@ export default class SceneGameOver extends Phaser.Scene {
       align: 'center'
     });
     this.title.setOrigin(0.5);
-    this.title = this.add.text(this.game.config.width * 0.5, 128, "Created by Jurge", {
+    this.subtitle = this.add.text(this.game.config.width * 0.5, 228, "Created by JCG", {
       fontFamily: 'monospace',
       fontSize: 48,
       fontStyle: 'bold',
       color: '#ffffff',
       align: 'center'
     });
-    this.title.setOrigin(0.5);
+    this.subtitle.setOrigin(0.5);
+    this.scoreText = this.add.text(this.game.config.width * 0.5, 328, `Score: ${this.playerScore}`)
   }
   update()
   {

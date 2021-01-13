@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "css-loader": "^5.0.1",
-    "ml5": "^0.6.0",
     "phaser": "^3.50.1"
   }
 }

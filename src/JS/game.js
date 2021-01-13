@@ -5,12 +5,14 @@ import SceneControls from './controls';
 import ScenePlay from './play';
 import SceneGameOver from './finish';
 
-let scaleRatio = window.devicePixelRatio / 3
-
 let config = {
   type: Phaser.WEBGL,
-  autoCenter: true,
-  width: window.innerWidth * 0.5, 
+  parent: 'game',
+  dom: {
+    createContainer: true,
+    behindCanvas: false,
+  },
+  width: window.innerWidth * 0.6, 
   height: window.innerHeight,
   backgroundColor: "black",
   physics: {
@@ -30,3 +32,5 @@ let config = {
 }
 
 const game = new Phaser.Game(config);
+
+
