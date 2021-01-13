@@ -1,14 +1,7 @@
 ![](https://img.shields.io/badge/Microverse-blueviolet)
 
 <!-- PROJECT LOGO -->
-<br />
-<p align="center">
-  <a href="#">
-    <img src="./src/assets/dim.png" alt="Logo" width="80" height="80">
-  </a>
-
-  <h3 align="center">Platform Game JS Capstone</h3>
-  <h2 align="center">Diamond Collector</h2>
+# Project Healthy Shooter Video Game
 
 
 
@@ -22,7 +15,6 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [How to play](#How-to-play)
-* [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
 * [Contact](#contact)
@@ -30,7 +22,7 @@
 
 <br>
 
-![](./src/assets/diamond-collector.gif)
+![](./src/Assets/images/home.png)
 
 <br>
 
@@ -45,7 +37,7 @@
 
 
 
-A Shooter Game called Healthy Shooter, The idea of this game is taken from the famous Endless Runner game, But with Upgraded UI , UX, and animations.
+A Shooter Game called Healthy Shooter, the idea of this game is to incorporate physical activity into video games. For this the web cam is used where the position of the user is used to determine the position of the player character. Thus achieveing physical activity during gameplay.
 
 
 ### Built With
@@ -76,7 +68,7 @@ npm install npm@latest -g
 1. Get a free API Key at [https://www.notion.so/Leaderboard-API-service-24c0c3c116974ac49488d4eb0267ade3](https://www.notion.so/Leaderboard-API-service-24c0c3c116974ac49488d4eb0267ade3)
 2. Clone the repo
 ```sh
-git clone git@github.com:sanadwj/Diamond-Collector.git
+git clone https://github.com/jurgen1c/healthy-shooter.git
 ```
 3. Install NPM packages
 ```sh
@@ -97,11 +89,10 @@ npm run test
 
 ## How to play
 
-* Use SpaceBar to jump between platforms, collect diamonds, and avoid obstacles
-
-## Game Documentation 
-
-[Diamond-Collector](https://docs.google.com/document/d/14_iBzd4NHNYhKuvc4AHw_zV8wyHeAqtlFOyVM4g-Y8Y/edit?usp=sharing)
+* Use A, S, D, W to move
+* Use Spacebar to fire
+* Move head to webcam feed cuadrants to move with cam controls
+* Destroy enemies to gain score
 
 
 <!-- CONTRIBUTING -->
@@ -129,10 +120,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 👤 **Jurgen Clausen**
 
-- Github: [@sanadwj](https://github.com/sanadwj)
-- Twitter: [@sandooog](https://twitter.com/sandooog)
-- Linkedin: [sanad-abujbara](https://linkedin.com/in/sanad-abujbara)
-- Portifolio: [sanadabujbara.tech](https://sanadabujbara.tech)
+- Github: [@jurgen1c](https://github.com/jurgen1c)
+- LinkedIn: [jurgen-clausen](https://www.linkedin.com/in/jurgen-clausen-2740061a9/)
+- Portafolio: [Personal-portafolio](https://jurgen1c.github.io/Portafolio/)
 
 <br>
 
