@@ -2,7 +2,6 @@ import 'regenerator-runtime';
 
 class Manager {
   constructor() {
-    // key: Za9DjzLaF8mX5266ZIyc
     this.key = 'Za9DjzLaF8mX5266ZIyc';
     this.url = `https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/${this.key}/scores/`;
   }
@@ -19,8 +18,7 @@ class Manager {
         },
         body: JSON.stringify(fullData),
       });
-      const responseData = await response.json();
-      return responseData;
+      return response.json();
     } catch (error) {
       throw new Error(`Could not reach the API: ${error}`);
     }
@@ -29,8 +27,7 @@ class Manager {
   async getScore() {
     try {
       const scoreData = await fetch(this.url);
-      const responseScore = await scoreData.json();
-      return responseScore;
+      return scoreData.json();
     } catch (e) {
       throw new Error(`Could not complete request: ${e}`);
     }

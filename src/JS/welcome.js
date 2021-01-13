@@ -42,7 +42,6 @@ export default class SceneWelcome extends Phaser.Scene {
         scoreCont.appendChild(div);
       }
     });
-    // this.scene.start("ScenePlay");
     this.sfx = {
       btnOver: this.sound.add('sndBtnOver'),
       btnDown: this.sound.add('sndBtnDown'),
@@ -108,8 +107,8 @@ export default class SceneWelcome extends Phaser.Scene {
     this.btnPlay.setInteractive();
 
     this.btnPlay.on('pointerover', () => {
-      this.btnPlay.setTexture('sprBtnPlayHover'); // set the button texture to sprBtnPlayHover
-      this.sfx.btnOver.play(); // play the button over sound
+      this.btnPlay.setTexture('sprBtnPlayHover');
+      this.sfx.btnOver.play();
     }, this);
 
     this.btnPlay.on('pointerout', () => {

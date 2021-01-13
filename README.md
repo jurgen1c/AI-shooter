@@ -46,10 +46,10 @@ A Shooter Game called Healthy Shooter, the idea of this game is to incorporate p
 
 ### Built With
 
-* JavaScript
-* Phaser Game Engine
-* Webpack
-* ML5
+* [JavaScript](https://www.javascript.com/)
+* [Phaser Game Engine](https://phaser.io/phaser3)
+* [Webpack](https://webpack.js.org/)
+* [ML5](https://www.ml5.org)
 
 
 
@@ -84,7 +84,7 @@ const key = 'Enter Your API';
 ```
 5. Run Webpack dev-server
 ```sh
-npm run start
+npm run dev
 ```
 6. Run the Tests:
 ```sh
@@ -97,6 +97,10 @@ npm run test
 * Use Spacebar to fire
 * Move head to webcam feed cuadrants to move with cam controls
 * Destroy enemies to gain score
+
+## Game Documentation 
+
+[Healthy-Shooter](https://docs.google.com/document/d/1Sxn8Cp031mhFcVbQCpVn1XUjFoJLm9ECxETehe6ucmc/edit?usp=sharing)
 
 
 <!-- CONTRIBUTING -->
