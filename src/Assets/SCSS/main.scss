@@ -1,10 +1,10 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body{
+body {
   display: flex;
   background: rgb(144, 189, 219);
   overflow: hidden;
@@ -18,14 +18,15 @@ body{
 }
 
 #instruct,
-#score{
+#score {
   width: 100%;
   height: 50%;
-  padding: .5rem 0;
+  padding: 0.5rem 0;
   border-radius: 10px;
   background: white;
+
   div {
-    margin: .3rem 0;
+    margin: 0.3rem 0;
     font-size: 1.3rem;
   }
 }
