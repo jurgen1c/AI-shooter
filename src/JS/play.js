@@ -3,6 +3,7 @@ import Player from './entities/player';
 import Enemy from './entities/enemy';
 import Chaser from './entities/chaser';
 import ScrollingBackground from './entities/scrolling';
+import scoreManager from './score';
 import sprBg0 from '../Assets/images/sprBg0.png';
 import sprBg1 from '../Assets/images/sprBg1.png';
 import sprExplosion from '../Assets/images/sprExplosion.png';
@@ -23,6 +24,7 @@ async function getMedia(scene) {
     };
     const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
     const video = document.createElement('video');
+    scene.tracks = mediaStream.getTracks();
     video.playsinline = true;
     video.srcObject = mediaStream;
     video.width = 80;
@@ -180,26 +182,16 @@ export default class ScenePlay extends Phaser.Scene {
       result.physics.add.overlap(result.player, result.enemies, (player, enemy) => {
         if (!player.getData('isDead')
             && !enemy.getData('isDead')) {
-          if (player.lives === 0) {
-            player.explode(false);
-            player.onDestroy();
-          } else {
-            result.livesText.setText(`Lives: ${result.player.lives}`);
-            player.lives -= 1;
-          }
+          player.lives -= 1;
+          result.livesText.setText(`Lives: ${result.player.lives}`);
           enemy.explode(true);
         }
       });
       result.physics.add.overlap(result.player, result.enemyLasers, (player, laser) => {
         if (!player.getData('isDead')
             && !laser.getData('isDead')) {
-          if (player.lives === 0) {
-            player.explode(false);
-            player.onDestroy();
-          } else {
-            result.livesText.setText(`Lives: ${result.player.lives}`);
-            player.lives -= 1;
-          }
+          player.lives -= 1;
+          result.livesText.setText(`Lives: ${result.player.lives}`);
           laser.destroy();
         }
       });
@@ -207,6 +199,24 @@ export default class ScenePlay extends Phaser.Scene {
   }
 
   update() {
+    if (this.player !== null && this.player !== undefined && this.player.lives === 0) {
+      const finalScore = this.player.score;
+      this.player.stop();
+      this.player.explode();
+      this.player = null;
+      this.tracks[0].stop();
+      this.time.addEvent({ // go to game over scene
+        delay: 1000,
+        callback() {
+          if (finalScore !== 0) {
+            scoreManager.postScore({ user: this.playerName, score: finalScore });
+          }
+          this.scene.start('SceneGameOver', { score: finalScore });
+        },
+        callbackScope: this,
+        loop: false,
+      });
+    }
     if (this.player) {
       if (!this.player.getData('isDead')) {
         this.player.update();
@@ -303,7 +313,7 @@ export default class ScenePlay extends Phaser.Scene {
   gotPoses(poses) {
     if (poses.length > 0) {
       this.pose = poses[0].pose;
-      if (this.player) {
+      if (this.player && this.player.body) {
         if (this.pose.nose.y > (this.video.videoHeight / 4) * 3) {
           this.player.moveDown(300);
         } else if (this.pose.nose.y < this.video.videoHeight / 2) {

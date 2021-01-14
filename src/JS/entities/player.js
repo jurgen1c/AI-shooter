@@ -13,7 +13,6 @@ export default class Player extends Phaser.GameObjects.Video {
     this.scene = scene;
     this.lives = 5;
     this.score = 0;
-    this.bodyPix = null;
     this.flipX = true;
     this.removeVideoElementOnDestroy = true;
     this.setData('type', 'Player');
@@ -27,7 +26,7 @@ export default class Player extends Phaser.GameObjects.Video {
     });
   }
 
-  explode(canDestroy) {
+  explode() {
     if (!this.getData('isDead')) {
       // Set the texture to the explosion image, then play the animation
       this.setTexture('sprExplosion'); // this refers to the same animation key we used when we added this.anims.create previously
@@ -47,13 +46,9 @@ export default class Player extends Phaser.GameObjects.Video {
       this.body.setVelocity(0, 0);
 
       this.on('animationcomplete', () => {
-        if (canDestroy) {
-          this.destroy();
-        } else {
-          this.setVisible(false);
-        }
+        this.setData('isDead', true);
+        this.destroy(true);
       }, this);
-      this.setData('isDead', true);
     }
   }
 
@@ -94,17 +89,11 @@ export default class Player extends Phaser.GameObjects.Video {
   }
 
   onDestroy() {
-    if (this.score !== 0) {
-      scoreManager.postScore({ user: this.scene.playerName, score: this.score });
+    if (this.shootTimer !== undefined) {
+      if (this.shootTimer) {
+        this.shootTimer.remove(false);
+      }
     }
-    this.scene.time.addEvent({ // go to game over scene
-      delay: 1000,
-      callback() {
-        this.scene.scene.start('SceneGameOver', { score: this.score });
-      },
-      callbackScope: this,
-      loop: false,
-    });
   }
 
   async setMedia(video) {
