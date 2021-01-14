@@ -260,13 +260,8 @@ export default class ScenePlay extends Phaser.Scene {
           }
 
           enemy.destroy();
-          if (this.player.lives === 0) {
-            this.player.explode();
-            this.player.onDestroy();
-          } else {
-            this.player.lives -= 1;
-            this.livesText.setText(`Lives: ${this.player.lives}`);
-          }
+          this.player.lives -= 1;
+          this.livesText.setText(`Lives: ${this.player.lives}`);
         }
       }
     }
