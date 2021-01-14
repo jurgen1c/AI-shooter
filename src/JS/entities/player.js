@@ -115,6 +115,7 @@ export default class Player extends Phaser.GameObjects.Video {
 
       this.videoTexture = this.scene.sys.textures
         .create(this.key, this.video, this.video.videoWidth, this.video.videoHeight);
+      this.videoTextureSource = this.videoTexture.source[0];
       this.videoTexture.add('__BASE', 0, 0, 0, this.video.videoWidth, this.video.videoHeight);
 
       this.setTexture(this.videoTexture);

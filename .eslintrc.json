@@ -19,6 +19,7 @@
     "eol-last": "off",
     "arrow-parens": "off",
     "no-unused-vars": "off",
+    "prefer-destructuring": "off",
     "import/no-unresolved": "off",
     "max-classes-per-file": ["error", 2]
   },
