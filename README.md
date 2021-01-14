@@ -28,7 +28,7 @@
 
 ## Live Demo
 
-[Live Demo](https://5fff4e3e0fa5dc0007c7a125--condescending-newton-ebcdc0.netlify.app/)
+[Live Demo](https://60007ec9aab26f0008fffa2b--condescending-newton-ebcdc0.netlify.app/)
 
 ## Video Presentation
 
