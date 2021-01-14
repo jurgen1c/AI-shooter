@@ -1,0 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  background: rgb(144, 189, 219);
+  overflow: hidden;
+}
+
+#info {
+  width: 35%;
+  height: 100%;
+  text-align: center;
+  padding: 1rem;
+}
+
+#instruct,
+#score {
+  width: 100%;
+  height: 50%;
+  padding: 0.5rem 0;
+  border-radius: 10px;
+  background: white;
+
+  div {
+    margin: 0.3rem 0;
+    font-size: 1.3rem;
+  }
+}
+
+#game {
+  width: 60%;
+}

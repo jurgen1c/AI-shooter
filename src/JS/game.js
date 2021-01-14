@@ -1,23 +1,32 @@
+import '../Assets/SCSS/main.scss';
 import Phaser from 'phaser';
+import SceneWelcome from './welcome';
+import ScenePlay from './play';
+import SceneGameOver from './finish';
 
-let config = {
+const config = {
   type: Phaser.WEBGL,
-  width: 480,
-  height: 520,
-  backgroundColor: "black",
+  parent: 'game',
+  dom: {
+    createContainer: true,
+    behindCanvas: false,
+  },
+  width: window.innerWidth * 0.6,
+  height: window.innerHeight,
+  backgroundColor: 'black',
   physics: {
-    default: "arcade",
+    default: 'arcade',
     arcade: {
-      gravity: { x: 0, y: 0 }
-    }
+      gravity: { x: 0, y: 0 },
+    },
   },
   scene: [
-    SceneMainMenu,
-    SceneMain,
-    SceneGameOver
+    SceneWelcome,
+    ScenePlay,
+    SceneGameOver,
   ],
   pixelArt: true,
-  roundPixels: true
-}
+  roundPixels: true,
+};
 
 const game = new Phaser.Game(config);

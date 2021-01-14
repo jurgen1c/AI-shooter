@@ -10,6 +10,10 @@ module.exports = {
     contentBase: './dist',
     port: 8080,
   },
+  externals: {
+    ml5: 'ml5',
+    p5: 'p5',
+  },
   module: {
     rules: [
       {

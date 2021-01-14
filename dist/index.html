@@ -3,11 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
   <title>healthy shooter</title>
 </head>
 <body>
+  <section id="info">
+    <h1>Top Scores</h1>
+    <div id="score">
+    </div>
+    <h1>Instructions</h1>
+    <div id="instruct">
+      <div>
+        <h3>Keyboard Controls</h3>
+        <p>Press: W to move Up</p>
+        <p>Press: S to move Down</p>
+        <p>Press: A to move Left</p>
+        <p>Press: D to move Right</p>
+        <p>Press: Space to Shoot</p>
+      </div>
+      <div>
+        <h3>Camera Controls</h3>
+        <p>Move head to Left side of cam feed to move Left</p>
+        <p>Move head to Right side of cam feed to move Right</p>
+        <p>Move head to Top side of cam feed to move Up</p>
+        <p>Move head to Bottom side of cam feed to move Down</p>
+        <p>Move head to Center side of cam feed to not Move</p>
+      </div>
+    </div>
+  </section>
   <section id="game"></section>
-  <section id="info"></section>
   <script src="main.js"></script>
 </body>
 </html>
